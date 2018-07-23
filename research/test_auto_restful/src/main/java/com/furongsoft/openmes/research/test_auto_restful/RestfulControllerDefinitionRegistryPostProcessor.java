@@ -16,7 +16,7 @@ public class RestfulControllerDefinitionRegistryPostProcessor implements BeanDef
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry beanDefinitionRegistry) throws BeansException {
         ClassPathRestfulControllerDefinitionScanner scanner = new ClassPathRestfulControllerDefinitionScanner(beanDefinitionRegistry);
         scanner.setResourceLoader(applicationContext);
-        scanner.scan("");
+        scanner.scan("com.furongsoft");
     }
 
     @Override

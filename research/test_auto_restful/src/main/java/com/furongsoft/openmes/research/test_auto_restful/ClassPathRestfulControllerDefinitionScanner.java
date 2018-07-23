@@ -14,7 +14,7 @@ import java.util.Set;
  * @author Alex
  */
 public class ClassPathRestfulControllerDefinitionScanner extends ClassPathBeanDefinitionScanner {
-    public ClassPathRestfulControllerDefinitionScanner(BeanDefinitionRegistry registry) {
+    ClassPathRestfulControllerDefinitionScanner(BeanDefinitionRegistry registry) {
         super(registry);
     }
 
@@ -35,6 +35,6 @@ public class ClassPathRestfulControllerDefinitionScanner extends ClassPathBeanDe
 
     @Override
     protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
-        return super.isCandidateComponent(beanDefinition) && beanDefinition.getMetadata().hasAnnotation(RestfulController.class.getName());
+        return beanDefinition.getMetadata().hasAnnotation(RestfulController.class.getName());
     }
 }
