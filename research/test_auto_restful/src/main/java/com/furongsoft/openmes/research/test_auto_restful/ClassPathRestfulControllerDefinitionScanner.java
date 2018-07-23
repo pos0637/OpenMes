@@ -1,11 +1,13 @@
 package com.furongsoft.openmes.research.test_auto_restful;
 
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinitionHolder;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -18,14 +20,19 @@ public class ClassPathRestfulControllerDefinitionScanner extends ClassPathBeanDe
         super(registry);
     }
 
-    @Override
-    protected Set<BeanDefinitionHolder> doScan(String... basePackages) {
-        Set<BeanDefinitionHolder> beanDefinitionHolders = super.doScan(basePackages);
-        beanDefinitionHolders.forEach(beanDefinitionHolder -> {
-            System.out.println(beanDefinitionHolder.getBeanDefinition().getBeanClassName());
-        });
+    /**
+     * 扫描自动Restful控制器
+     *
+     * @param basePackages 基础包名
+     */
+    public List<BeanDefinition> doRestfulControllerScan(String... basePackages) {
+        List<BeanDefinition> result = new LinkedList<>();
+        for (String basePackage : basePackages) {
+            Set<BeanDefinition> beanDefinitions = super.findCandidateComponents(basePackage);
+            result.addAll(beanDefinitions);
+        }
 
-        return beanDefinitionHolders;
+        return result;
     }
 
     @Override

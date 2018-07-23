@@ -1,9 +1,5 @@
 package com.furongsoft.openmes.research.test_auto_restful;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 @RestfulController
 public interface TestController {
 }
