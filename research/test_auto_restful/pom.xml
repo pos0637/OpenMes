@@ -36,10 +36,11 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy -->
         <dependency>
-            <groupId>com.itranswarp</groupId>
-            <artifactId>compiler</artifactId>
-            <version>1.0</version>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.8.14</version>
         </dependency>
     </dependencies>
 
