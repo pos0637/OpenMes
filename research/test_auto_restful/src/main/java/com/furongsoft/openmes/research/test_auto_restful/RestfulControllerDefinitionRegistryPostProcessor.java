@@ -65,10 +65,11 @@ public class RestfulControllerDefinitionRegistryPostProcessor implements BeanDef
         }
 
         beanDefinitions.forEach(beanDefinition -> {
+            String beanName = "Gen" + beanDefinition.getBeanClassName();
             Class<?> clazz = new ByteBuddy()
                     .subclass(BaseController.class)
                     .annotateType(new ControllerImpl())
-                    .name(beanDefinition.getBeanClassName())
+                    .name(beanName)
                     .make()
                     .load(getClass().getClassLoader(), ClassLoadingStrategy.Default.WRAPPER)
                     .getLoaded();
@@ -78,7 +79,7 @@ public class RestfulControllerDefinitionRegistryPostProcessor implements BeanDef
             definition.setScope("singleton");
             definition.setLazyInit(false);
             definition.setAutowireCandidate(true);
-            beanDefinitionRegistry.registerBeanDefinition(beanDefinition.getBeanClassName(), definition);
+            beanDefinitionRegistry.registerBeanDefinition(beanName, definition);
         });
     }
 }
