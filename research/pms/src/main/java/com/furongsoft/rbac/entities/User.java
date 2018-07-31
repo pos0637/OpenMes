@@ -25,8 +25,7 @@ public class User extends BaseEntity implements Serializable {
      */
     @Id
     @GeneratedValue
-    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(32) COMMENT 'UUID'")
-    private String id;
+    private long id;
 
     /**
      * 登录账户
