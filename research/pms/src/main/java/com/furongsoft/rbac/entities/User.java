@@ -25,6 +25,7 @@ public class User extends BaseEntity implements Serializable {
      */
     @Id
     @GeneratedValue
+    @Column(name = "id", columnDefinition = "BIGINT(20) COMMENT '主键'")
     private long id;
 
     /**
