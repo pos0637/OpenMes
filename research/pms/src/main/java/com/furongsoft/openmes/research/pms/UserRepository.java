@@ -1,5 +1,6 @@
 package com.furongsoft.openmes.research.pms;
 
+import com.furongsoft.base.misc.JpaUtils;
 import com.furongsoft.rbac.entities.QUser;
 import com.furongsoft.rbac.entities.User;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
@@ -14,6 +15,6 @@ import javax.annotation.Nonnull;
 public interface UserRepository extends PagingAndSortingRepository<User, Long>, QuerydslPredicateExecutor<User>, QuerydslBinderCustomizer<QUser> {
     @Override
     default void customize(@Nonnull QuerydslBindings querydslBindings, @Nonnull QUser qUser) {
-        querydslBindings.bind(qUser.userName).first(((stringPath, s) -> qUser.userName.like("%" + s + "%")));
+        JpaUtils.bindQuerydsl(querydslBindings, qUser);
     }
 }

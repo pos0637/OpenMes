@@ -2,6 +2,7 @@ package com.furongsoft.rbac.entities;
 
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.furongsoft.base.entities.BaseEntity;
+import com.furongsoft.base.misc.JpaUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,6 +33,7 @@ public class User extends BaseEntity implements Serializable {
      * 登录账户
      */
     @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(32) COMMENT '登录账户'")
+    @JpaUtils.QueryField(type = JpaUtils.MatchType.like)
     private String userName;
 
     /**
