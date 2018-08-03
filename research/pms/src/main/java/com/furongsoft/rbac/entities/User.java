@@ -5,6 +5,8 @@ import com.furongsoft.base.entities.BaseEntity;
 import com.furongsoft.base.misc.JpaUtils;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -273,14 +275,30 @@ public class User extends BaseEntity implements Serializable {
     /**
      * 头像
      */
-    @Column(columnDefinition = "VARCHAR(255) COMMENT '头像'")
-    private String iconUrl;
+    @Column(columnDefinition = "BIGINT(20) COMMENT '头像'")
+    private Long iconId;
+
+    /**
+     * 头像
+     */
+    @OneToOne
+    @JoinColumn(name = "iconId", insertable = false, updatable = false)
+    @Fetch(FetchMode.JOIN)
+    private Resource icon;
 
     /**
      * 照片
      */
-    @Column(columnDefinition = "VARCHAR(255) COMMENT '照片'")
-    private String pictureUrl;
+    @Column(columnDefinition = "BIGINT(20) COMMENT '照片'")
+    private Long pictureId;
+
+    /**
+     * 照片
+     */
+    @OneToOne
+    @JoinColumn(name = "pictureId", insertable = false, updatable = false)
+    @Fetch(FetchMode.JOIN)
+    private Resource picture;
 
     /**
      * 备注
