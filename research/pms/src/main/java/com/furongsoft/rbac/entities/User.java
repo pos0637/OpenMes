@@ -281,8 +281,8 @@ public class User extends BaseEntity implements Serializable {
     /**
      * 头像
      */
-    @OneToOne
-    @JoinColumn(name = "iconId", insertable = false, updatable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "iconId", insertable = false, updatable = false, foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     @Fetch(FetchMode.JOIN)
     private Resource icon;
 
@@ -296,7 +296,7 @@ public class User extends BaseEntity implements Serializable {
      * 照片
      */
     @OneToOne
-    @JoinColumn(name = "pictureId", insertable = false, updatable = false)
+    @JoinColumn(name = "pictureId", insertable = false, updatable = false, foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     @Fetch(FetchMode.JOIN)
     private Resource picture;
 
