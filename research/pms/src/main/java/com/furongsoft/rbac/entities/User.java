@@ -1,12 +1,12 @@
 package com.furongsoft.rbac.entities;
 
-import com.baomidou.mybatisplus.annotations.TableName;
 import com.furongsoft.base.entities.BaseEntity;
 import com.furongsoft.base.misc.JpaUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -19,7 +19,6 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "t_sys_user")
-@TableName("t_sys_user")
 @Getter
 @Setter
 public class User extends BaseEntity implements Serializable {
@@ -281,9 +280,10 @@ public class User extends BaseEntity implements Serializable {
     /**
      * 头像
      */
-    @OneToOne
-    @JoinColumn(name = "iconId", insertable = false, updatable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "iconId", referencedColumnName = "id", insertable = false, updatable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     @Fetch(FetchMode.JOIN)
+    @RestResource(exported = false)
     private Resource icon;
 
     /**
@@ -295,9 +295,10 @@ public class User extends BaseEntity implements Serializable {
     /**
      * 照片
      */
-    @OneToOne
-    @JoinColumn(name = "pictureId", insertable = false, updatable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pictureId", referencedColumnName = "id", insertable = false, updatable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     @Fetch(FetchMode.JOIN)
+    @RestResource(exported = false)
     private Resource picture;
 
     /**
