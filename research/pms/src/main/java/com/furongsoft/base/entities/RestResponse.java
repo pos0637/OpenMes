@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.hateoas.ResourceSupport;
+import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
  */
 @Getter
 @Setter
-public class RestResponse extends ResourceSupport {
+public class RestResponse extends Resource {
     /**
      * HTTP状态码
      */
@@ -55,6 +55,7 @@ public class RestResponse extends ResourceSupport {
     }
 
     public RestResponse(int code, String message, Object data) {
+        super(code);
         this.code = code;
         this.errno = (HttpStatus.OK.value() == code) ? 0 : -1;
         this.message = message;
@@ -62,6 +63,7 @@ public class RestResponse extends ResourceSupport {
     }
 
     public RestResponse(int code, String message, Object data, String newToken) {
+        super(code);
         this.code = code;
         this.errno = (HttpStatus.OK.value() == code) ? 0 : -1;
         this.message = message;
