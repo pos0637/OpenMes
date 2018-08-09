@@ -64,7 +64,7 @@ public class User extends BaseEntity implements Serializable {
     /**
      * 性别
      */
-    @Column(columnDefinition = "INT(10) COMMENT '性别'")
+    @Column(columnDefinition = "INT(1) default 0 COMMENT '性别:0 男, 1 女'")
     private Integer sex;
 
     /**

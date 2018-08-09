@@ -1,7 +1,10 @@
 package com.furongsoft.base.entities;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.hateoas.ResourceSupport;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -11,7 +14,7 @@ import org.springframework.http.HttpStatus;
  */
 @Getter
 @Setter
-public class RestResponse {
+public class RestResponse extends ResourceSupport {
     /**
      * HTTP状态码
      */
@@ -30,6 +33,8 @@ public class RestResponse {
     /**
      * 返回数据
      */
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @JsonProperty("_embedded")
     private Object data;
 
     /**

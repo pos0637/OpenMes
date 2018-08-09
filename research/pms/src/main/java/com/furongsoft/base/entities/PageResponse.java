@@ -19,8 +19,7 @@ public class PageResponse<T> extends RestResponse {
     private int total;
 
     public PageResponse(HttpStatus status, Page<T> page) {
-        super(status);
-        setData(page.getRecords());
+        super(status, null, page.getRecords());
         setTotal(page.getTotal());
     }
 }
