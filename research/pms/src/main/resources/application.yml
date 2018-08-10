@@ -108,6 +108,10 @@ upload:
   # 附件路径
   path: ./attachments
 
+security:
+  # 登录失败重试次数
+  max-retry-count: 5
+
 logging:
   path: ./logs
   config: classpath:logback-config.xml

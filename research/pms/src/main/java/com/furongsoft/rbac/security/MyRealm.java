@@ -24,8 +24,8 @@ public class MyRealm extends AuthorizingRealm {
     private final UserRepository userRepository;
 
     @Autowired
-    public MyRealm(UserRepository userRepository) {
-        super(new RetryLimitHashedCredentialsMatcher(null));
+    public MyRealm(UserRepository userRepository, RetryLimitHashedCredentialsMatcher matcher) {
+        super(matcher);
         this.userRepository = userRepository;
     }
 

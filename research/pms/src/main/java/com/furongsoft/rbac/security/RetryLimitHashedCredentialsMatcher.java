@@ -7,6 +7,8 @@ import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.cache.Cache;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -15,19 +17,22 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author Alex
  */
+@Component
 public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher {
     /**
      * 最大重试登录次数
      */
-    private static final int MAX_RETRY_COUNT = 5;
+    @Value("${security.max-retry-count}")
+    private int MAX_RETRY_COUNT;
 
     /**
      * 缓存
      */
     private Cache<String, AtomicInteger> mRetryCache;
 
-    public RetryLimitHashedCredentialsMatcher(Cache<String, AtomicInteger> retryCache) {
-        this.mRetryCache = retryCache;
+    public RetryLimitHashedCredentialsMatcher() {
+        // TODO: create cache
+        this.mRetryCache = null;
         this.setHashAlgorithmName(PasswordHelper.ALGORITHM_NAME);
         this.setHashIterations(PasswordHelper.HASH_ITERATIONS);
     }
