@@ -42,6 +42,10 @@ public class RestResponse extends Resource {
      */
     private String newToken;
 
+    public RestResponse() {
+        super(0);
+    }
+
     public RestResponse(HttpStatus status) {
         this(status.value(), null, null);
     }
