@@ -8,4 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RepositoryRestResource(path = "/task")
 @Transactional(rollbackFor = Exception.class)
 public interface TaskRepository extends PagingAndSortingRepository<Task, Long>, QuerydslRepository<Task, QTask> {
+    @Override
+    default <S extends Task> S save(S entity) {
+        S s = this.save(entity);
+        return s;
+    }
 }

@@ -1,5 +1,6 @@
 package com.furongsoft.openmes.research.pms;
 
+import com.alibaba.fastjson.JSON;
 import com.furongsoft.base.entities.RestResponse;
 import com.furongsoft.base.misc.Tracker;
 import org.junit.Test;
@@ -11,13 +12,13 @@ import java.util.Date;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class Task extends BaseTest {
+public class TaskTests extends BaseTest {
     private static final String URL_PREFIX = "http://localhost:8080/api/v1";
 
     @Test
     public void testGetTasks() {
         RestResponse response = getRestTemplate().getForObject(URL_PREFIX + "/task", RestResponse.class);
-        Tracker.info(response.toString());
+        Tracker.info(JSON.toJSONString(response));
     }
 
     @Test
@@ -33,6 +34,22 @@ public class Task extends BaseTest {
         task.setEnable(0L);
 
         RestResponse response = getRestTemplate().postForObject(URL_PREFIX + "/task", task, RestResponse.class);
-        Tracker.info(response.toString());
+        Tracker.info(JSON.toJSONString(response));
+    }
+
+    @Test
+    public void testAddTask2() {
+        com.furongsoft.openmes.research.pms.task.Task task = new com.furongsoft.openmes.research.pms.task.Task();
+        task.setName("task");
+        task.setStartTime(new Date());
+        task.setEndTime(new Date());
+        task.setType(0L);
+        task.setState(0L);
+        task.setAcceptersId(0L);
+        task.setPriority(0L);
+        task.setEnable(0L);
+
+        RestResponse response = getRestTemplate().postForObject(URL_PREFIX + "/task/save2", task, RestResponse.class);
+        Tracker.info(JSON.toJSONString(response));
     }
 }

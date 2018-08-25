@@ -1,5 +1,6 @@
 package com.furongsoft.openmes.research.pms.task;
 
+import com.furongsoft.base.entities.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -7,6 +8,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -19,7 +21,7 @@ import java.util.List;
 @Table(name = "t_pms_task")
 @Getter
 @Setter
-public class Task {
+public class Task extends BaseEntity implements Serializable {
     /**
      * 自增序号
      */
