@@ -3,7 +3,6 @@ package com.furongsoft.openmes.research.test_auto_restful.services;
 import com.furongsoft.openmes.research.test_auto_restful.repositories.BaseRepository;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
-import lombok.Setter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -11,9 +10,22 @@ import org.springframework.lang.NonNull;
 
 import java.util.Optional;
 
-@Setter
+/**
+ * 基础服务
+ *
+ * @param <T> 实体类型
+ * @param <V> 主键类型
+ * @author Alex
+ */
 public class BaseService<T, V> implements BaseRepository<T, V> {
     private BaseRepository repository;
+
+    public BaseService(BaseRepository repository) {
+        this.repository = repository;
+    }
+
+    private BaseService() {
+    }
 
     @Override
     @NonNull
