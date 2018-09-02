@@ -19,6 +19,10 @@ package com.furongsoft;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -26,12 +30,11 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Goal which touches a timestamp file.
@@ -41,6 +44,8 @@ import java.util.List;
  */
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.TEST)
 public class MyMojo extends AbstractMojo {
+    private final String ServiceAnnotation = "RestfulService";
+
     @Parameter(defaultValue = "${project.build.sourceDirectory}", required = true)
     private File sourceDirectory;
 
@@ -115,13 +120,50 @@ public class MyMojo extends AbstractMojo {
             try {
                 CompilationUnit compilationUnit = JavaParser.parse(file);
                 compilationUnit.findAll(ClassOrInterfaceDeclaration.class).stream()
-                        .filter(c -> c.isAnnotationPresent("RestfulService"))
+                        .filter(c -> c.isAnnotationPresent(ServiceAnnotation))
                         .forEach(c -> {
                             getLog().info(file.getAbsolutePath());
+                            generateRestfulControllerCode(file);
                         });
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                getLog().error(e);
             }
         });
+    }
+
+    /**
+     * 生成Restful控制器代码
+     */
+    private void generateRestfulControllerCode(File file) {
+        Writer writer = null;
+
+        try {
+            Configuration cfg = new Configuration(Configuration.VERSION_2_3_27);
+            cfg.setDirectoryForTemplateLoading(new File(getClass().getResource("/").toString()));
+            cfg.setDefaultEncoding("UTF-8");
+            cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+            cfg.setLogTemplateExceptions(false);
+            cfg.setWrapUncheckedExceptions(true);
+
+            Template template = cfg.getTemplate("restfulController.ftlh");
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("package", "com.furongsoft.xxx");
+            params.put("className", "XXXService");
+
+            File newFile = new File(outputDirectory, "genertaed-sources/XXXController.java");
+            writer = new OutputStreamWriter(new FileOutputStream(newFile), "UTF-8");
+            template.process(params, writer);
+        } catch (IOException | TemplateException | NullPointerException e) {
+            getLog().error(e);
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.flush();
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
