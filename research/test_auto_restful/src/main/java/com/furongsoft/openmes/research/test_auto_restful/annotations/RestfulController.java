@@ -1,4 +1,4 @@
-package com.furongsoft.openmes.research.test_auto_restful;
+package com.furongsoft.openmes.research.test_auto_restful.annotations;
 
 import java.lang.annotation.*;
 
@@ -11,4 +11,10 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface RestfulController {
+    /**
+     * 服务类型
+     *
+     * @return 服务类型
+     */
+    Class service();
 }

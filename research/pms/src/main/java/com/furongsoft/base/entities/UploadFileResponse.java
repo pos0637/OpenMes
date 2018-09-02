@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
  */
 public class UploadFileResponse extends RestResponse {
     public UploadFileResponse(HttpStatus status, String uuid) {
-        super(status, null, uuid);
+        super(status);
+        setData(uuid);
     }
 }

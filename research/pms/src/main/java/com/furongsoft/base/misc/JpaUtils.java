@@ -1,7 +1,7 @@
 package com.furongsoft.base.misc;
 
-import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.dsl.DateTimePath;
+import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
@@ -62,9 +62,10 @@ public class JpaUtils {
      *
      * @param querydslBindings 绑定对象
      * @param queryObject      查询对象
+     * @param <T>              查询对象类型
      */
     @SuppressWarnings("unchecked")
-    public static void bindQuerydsl(QuerydslBindings querydslBindings, EntityPath queryObject) {
+    public static <T extends EntityPathBase<?>> void bindQuerydsl(QuerydslBindings querydslBindings, T queryObject) {
         List<Field> fields = getAllFields(queryObject.getType());
         if ((fields != null) && !fields.isEmpty()) {
             fields.forEach(field -> {

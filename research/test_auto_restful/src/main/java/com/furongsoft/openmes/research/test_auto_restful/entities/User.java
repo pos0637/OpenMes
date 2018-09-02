@@ -1,12 +1,7 @@
-package com.furongsoft.rbac.entities;
+package com.furongsoft.openmes.research.test_auto_restful.entities;
 
-import com.baomidou.mybatisplus.annotations.TableName;
-import com.furongsoft.base.entities.BaseEntity;
-import com.furongsoft.base.misc.JpaUtils;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -19,7 +14,6 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "t_sys_user")
-@TableName("t_sys_user")
 @Getter
 @Setter
 public class User extends BaseEntity implements Serializable {
@@ -35,7 +29,6 @@ public class User extends BaseEntity implements Serializable {
      * 登录账户
      */
     @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(32) COMMENT '登录账户'")
-    @JpaUtils.QueryField(type = JpaUtils.MatchType.like)
     private String userName;
 
     /**
@@ -65,7 +58,7 @@ public class User extends BaseEntity implements Serializable {
     /**
      * 性别
      */
-    @Column(columnDefinition = "INT(10) COMMENT '性别'")
+    @Column(columnDefinition = "INT(1) default 0 COMMENT '性别:0 男, 1 女'")
     private Integer sex;
 
     /**
@@ -279,26 +272,10 @@ public class User extends BaseEntity implements Serializable {
     private Long iconId;
 
     /**
-     * 头像
-     */
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "iconId", insertable = false, updatable = false, foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
-    @Fetch(FetchMode.JOIN)
-    private Resource icon;
-
-    /**
      * 照片
      */
     @Column(columnDefinition = "BIGINT(20) COMMENT '照片'")
     private Long pictureId;
-
-    /**
-     * 照片
-     */
-    @OneToOne
-    @JoinColumn(name = "pictureId", insertable = false, updatable = false, foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
-    @Fetch(FetchMode.JOIN)
-    private Resource picture;
 
     /**
      * 备注
