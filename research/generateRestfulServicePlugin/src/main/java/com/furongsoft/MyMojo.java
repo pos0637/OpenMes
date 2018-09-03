@@ -19,6 +19,9 @@ package com.furongsoft;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.expr.MemberValuePair;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -31,10 +34,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Goal which touches a timestamp file.
@@ -45,6 +45,7 @@ import java.util.Map;
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.TEST)
 public class MyMojo extends AbstractMojo {
     private final String ServiceAnnotation = "RestfulService";
+    private final String BaseService = "BaseService";
 
     @Parameter(defaultValue = "${project.build.sourceDirectory}", required = true)
     private File sourceDirectory;
@@ -79,32 +80,71 @@ public class MyMojo extends AbstractMojo {
         return list;
     }
 
+    /**
+     * 获取注解参数值
+     *
+     * @param cd             类与接口定义
+     * @param annotationName 注解名称
+     * @param parameterName  参数名称
+     * @return 参数值
+     */
+    private static String getAnnotationParameter(ClassOrInterfaceDeclaration cd, String annotationName, String parameterName) {
+        Optional<AnnotationExpr> expr = cd.getAnnotationByName(annotationName);
+        if (!expr.isPresent()) {
+            return "";
+        }
+
+        List<MemberValuePair> children = expr.get().findAll(MemberValuePair.class);
+        for (MemberValuePair memberValuePair : children) {
+            if (parameterName.equals(memberValuePair.getNameAsString())) {
+                return memberValuePair.getValue().toString();
+            }
+        }
+
+        return "";
+    }
+
+    /**
+     * 获取父类泛型
+     *
+     * @param cd        类与接口定义
+     * @param className 类名
+     * @return 泛型
+     */
+    private static String[] getGenericTypesOfExtendedClass(final ClassOrInterfaceDeclaration cd, final String className) {
+        Optional<ClassOrInterfaceType> type = cd.getExtendedTypes().stream()
+                .filter(classOrInterfaceType -> classOrInterfaceType.asString().startsWith(className))
+                .findFirst();
+        if (type.isPresent()) {
+            return getGenericTypes(cd, type.get().asString());
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 获取泛型
+     *
+     * @param cd        类与接口定义
+     * @param className 类名
+     * @return 泛型
+     */
+    private static String[] getGenericTypes(final ClassOrInterfaceDeclaration cd, final String className) {
+        if (!className.endsWith(">")) {
+            return null;
+        }
+
+        int pos = className.indexOf('<');
+        if (pos < 0) {
+            return null;
+        }
+
+        return className.substring(pos + 1, className.length() - 1).split(",");
+    }
+
     public void execute() throws MojoExecutionException {
         getLog().info("MyMojo run here");
         generateRestfulController();
-
-        final File f = outputDirectory;
-        if (!f.exists()) {
-            f.mkdirs();
-        }
-
-        File touch = new File(f, "touch.txt");
-        FileWriter w = null;
-
-        try {
-            w = new FileWriter(touch);
-            w.write("touch.txt");
-        } catch (IOException e) {
-            throw new MojoExecutionException("Error creating file " + touch, e);
-        } finally {
-            if (w != null) {
-                try {
-                    w.close();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-        }
     }
 
     /**
@@ -123,7 +163,7 @@ public class MyMojo extends AbstractMojo {
                         .filter(c -> c.isAnnotationPresent(ServiceAnnotation))
                         .forEach(c -> {
                             getLog().info(file.getAbsolutePath());
-                            generateRestfulControllerCode(file);
+                            generateRestfulControllerCode(compilationUnit, c);
                         });
             } catch (FileNotFoundException e) {
                 getLog().error(e);
@@ -133,24 +173,53 @@ public class MyMojo extends AbstractMojo {
 
     /**
      * 生成Restful控制器代码
+     *
+     * @param cu 编译单元
+     * @param cd 类与接口定义
      */
-    private void generateRestfulControllerCode(File file) {
+    private void generateRestfulControllerCode(CompilationUnit cu, ClassOrInterfaceDeclaration cd) {
         Writer writer = null;
 
         try {
             Configuration cfg = new Configuration(Configuration.VERSION_2_3_27);
-            cfg.setDirectoryForTemplateLoading(new File(getClass().getResource("/").toString()));
+            cfg.setClassForTemplateLoading(getClass(), "/");
             cfg.setDefaultEncoding("UTF-8");
             cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
             cfg.setLogTemplateExceptions(false);
             cfg.setWrapUncheckedExceptions(true);
 
+            String packageName = cu.getPackageDeclaration().isPresent() ? cu.getPackageDeclaration().get().getName().asString() : "";
+            String packagePath = packageName.replace('.', '/');
+            String className = cd.getNameAsString();
+            String baseUrlPath = getAnnotationParameter(cd, ServiceAnnotation, "path");
+            String[] genericTypes = getGenericTypesOfExtendedClass(cd, BaseService);
+            if ((genericTypes == null) || (genericTypes.length < 2)) {
+                return;
+            }
+
+            HashMap<String, String> imports = new HashMap<>();
+            imports.put("org.springframework.stereotype.Controller", "org.springframework.stereotype.Controller");
+            imports.put("org.springframework.web.bind.annotation.*", "org.springframework.web.bind.annotation.*");
+            imports.put("org.springframework.beans.factory.annotation.Autowired", "org.springframework.beans.factory.annotation.Autowired");
+            cu.getImports().forEach(importDeclaration -> {
+                imports.put(importDeclaration.getNameAsString(), importDeclaration.getNameAsString());
+            });
+
             Template template = cfg.getTemplate("restfulController.ftlh");
             Map<String, Object> params = new HashMap<String, Object>();
-            params.put("package", "com.furongsoft.xxx");
-            params.put("className", "XXXService");
+            params.put("package", packageName);
+            params.put("className", className);
+            params.put("baseUrlPath", baseUrlPath.replace("\"", ""));
+            params.put("resourceName", genericTypes[0] + "s");
+            params.put("entityName", genericTypes[0]);
+            params.put("imports", imports);
 
-            File newFile = new File(outputDirectory, "genertaed-sources/XXXController.java");
+            File newPath = new File(outputDirectory, "generated-sources/" + packagePath);
+            if (!newPath.exists()) {
+                newPath.mkdirs();
+            }
+
+            File newFile = new File(newPath, className + "Controller.java");
             writer = new OutputStreamWriter(new FileOutputStream(newFile), "UTF-8");
             template.process(params, writer);
         } catch (IOException | TemplateException | NullPointerException e) {
