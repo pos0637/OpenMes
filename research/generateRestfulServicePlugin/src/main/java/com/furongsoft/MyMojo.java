@@ -218,6 +218,7 @@ public class MyMojo extends AbstractMojo {
             params.put("baseUrlPath", baseUrlPath.replace("\"", ""));
             params.put("resourceName", genericTypes[0].toLowerCase() + "s");
             params.put("entityName", genericTypes[0]);
+            params.put("pk", genericTypes[1]);
             params.put("imports", imports);
 
             File newPath = new File(outputDirectory, "generated-sources/" + packagePath);

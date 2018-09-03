@@ -15,32 +15,34 @@ public class ${className}Controller {
     }
 
     @GetMapping("/${resourceName}")
-    public PageResponse findAll(PageRequest pageRequest) {
-        return new PageResponse(HttpStatus.OK, service.findAll(pageRequest));
+    public PageResponse findAll(@RequestParam java.util.Map<String, Object> params) {
+        return new PageResponse(HttpStatus.OK, service.findAll(params));
     }
 
     @GetMapping("/${resourceName}/{id}")
-    public RestResponse findOne(@PathVariable Long id) {
-        return new RestResponse(HttpStatus.OK, service.findOne(id));
+    public RestResponse findById(@PathVariable ${pk} id) {
+        return new RestResponse(HttpStatus.OK, null, service.findById(id).get());
     }
 
     @PostMapping("/${resourceName}")
     public RestResponse save(${entityName} entity) {
-        return new RestResponse(HttpStatus.OK, service.save(entity));
+        return new RestResponse(HttpStatus.OK, null, service.save(entity));
     }
 
-    @PutMapping("/${resourceName}/{id}")
-    public RestResponse edit(@PathVariable Long id, ${entityName} entity) {
-        return new RestResponse(HttpStatus.OK);
+    @PutMapping("/${resourceName}")
+    public RestResponse edit(${entityName} entity) {
+        return new RestResponse(HttpStatus.OK, null, service.save(entity));
     }
 
     @DeleteMapping("/${resourceName}/{id}")
-    public RestResponse delete(@PathVariable Long id) {
-        return new RestResponse(HttpStatus.OK, service.delete(id));
+    public RestResponse deleteById(@PathVariable ${pk} id) {
+        service.deleteById(id);
+        return new RestResponse(HttpStatus.OK);
     }
 
     @PostMapping("/${resourceName}/batch")
     public RestResponse deleteBatch(@RequestParam String delete) {
-        return new RestResponse(HttpStatus.OK, service.deleteBatch(delete));
+        service.deleteBatch(delete);
+        return new RestResponse(HttpStatus.OK);
     }
 }
