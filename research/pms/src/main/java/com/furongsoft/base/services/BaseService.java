@@ -6,8 +6,11 @@ import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -25,6 +28,13 @@ public class BaseService<T, V> implements BaseRepository<T, V> {
     }
 
     private BaseService() {
+    }
+
+    public Page<T> findAll(Map<String, Object> params) {
+        return null;
+    }
+
+    public void deleteBatch(String delete) {
     }
 
     @Override
@@ -145,5 +155,34 @@ public class BaseService<T, V> implements BaseRepository<T, V> {
     @Override
     public void deleteAll() {
         repository.deleteAll();
+    }
+
+    @Override
+    @NonNull
+    public Optional<T> findOne(Specification<T> specification) {
+        return repository.findOne(specification);
+    }
+
+    @Override
+    @NonNull
+    public List<T> findAll(Specification<T> specification) {
+        return repository.findAll(specification);
+    }
+
+    @Override
+    @NonNull
+    public Page<T> findAll(Specification<T> specification, @NonNull Pageable pageable) {
+        return repository.findAll(specification, pageable);
+    }
+
+    @Override
+    @NonNull
+    public List<T> findAll(Specification<T> specification, @NonNull Sort sort) {
+        return repository.findAll(specification, sort);
+    }
+
+    @Override
+    public long count(Specification<T> specification) {
+        return repository.count(specification);
     }
 }

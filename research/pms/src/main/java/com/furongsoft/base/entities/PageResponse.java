@@ -1,6 +1,5 @@
 package com.furongsoft.base.entities;
 
-import com.baomidou.mybatisplus.plugins.Page;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
@@ -16,11 +15,17 @@ public class PageResponse<T> extends RestResponse {
     /**
      * 记录总数
      */
-    private int total;
+    private long total;
 
-    public PageResponse(HttpStatus status, Page<T> page) {
+    public PageResponse(HttpStatus status, com.baomidou.mybatisplus.plugins.Page<T> page) {
         super(status);
         setData(page.getRecords());
         setTotal(page.getTotal());
+    }
+
+    public PageResponse(HttpStatus status, org.springframework.data.domain.Page<T> page) {
+        super(status);
+        setData(page.getContent());
+        setTotal(page.getTotalElements());
     }
 }

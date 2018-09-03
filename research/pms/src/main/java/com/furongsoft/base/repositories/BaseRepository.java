@@ -1,5 +1,6 @@
 package com.furongsoft.base.repositories;
 
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -12,5 +13,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * @author Alex
  */
 @NoRepositoryBean
-public interface BaseRepository<T, V> extends PagingAndSortingRepository<T, V>, QuerydslPredicateExecutor<T> {
+public interface BaseRepository<T, V> extends PagingAndSortingRepository<T, V>, JpaSpecificationExecutor<T>, QuerydslPredicateExecutor<T> {
 }
