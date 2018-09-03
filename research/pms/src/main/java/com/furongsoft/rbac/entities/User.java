@@ -1,6 +1,7 @@
 package com.furongsoft.rbac.entities;
 
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.furongsoft.base.annotations.RestfulEntity;
 import com.furongsoft.base.entities.BaseEntity;
 import com.furongsoft.base.misc.JpaUtils;
 import lombok.Getter;
@@ -17,9 +18,9 @@ import java.util.Date;
  *
  * @author Alex
  */
+@RestfulEntity
 @Entity
 @Table(name = "t_sys_user")
-@TableName("t_sys_user")
 @Getter
 @Setter
 public class User extends BaseEntity implements Serializable {

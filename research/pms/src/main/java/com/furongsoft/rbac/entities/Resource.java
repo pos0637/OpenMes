@@ -1,6 +1,7 @@
 package com.furongsoft.rbac.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.furongsoft.base.annotations.RestfulEntity;
 import com.furongsoft.base.entities.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import java.io.Serializable;
  *
  * @author Alex
  */
+@RestfulEntity
 @Entity
 @Table(name = "t_sys_resource")
 @Getter

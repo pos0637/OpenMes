@@ -182,6 +182,18 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>com.furongsoft</groupId>
+                <artifactId>generate-restful-service-plugin</artifactId>
+                <version>1.0-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
