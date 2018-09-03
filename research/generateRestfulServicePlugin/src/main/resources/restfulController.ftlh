@@ -1,6 +1,6 @@
 package ${package};
 
-<#list imports as key, import>
+<#list imports as import, value>
 import ${import};
 </#list>
 

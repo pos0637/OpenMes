@@ -46,6 +46,7 @@ import java.util.*;
 public class MyMojo extends AbstractMojo {
     private final String ServiceAnnotation = "RestfulService";
     private final String BaseService = "BaseService";
+    private final String EntityAnnotation = "RestfulEntity";
 
     @Parameter(defaultValue = "${project.build.sourceDirectory}", required = true)
     private File sourceDirectory;
@@ -67,9 +68,9 @@ public class MyMojo extends AbstractMojo {
         }
 
         for (File file : files) {
-            if (file.isFile()) {
+            if (file.isFile() && file.getName().endsWith(".java")) {
                 list.add(file);
-            } else {
+            } else if (file.isDirectory()) {
                 List<File> ret = scan(file);
                 if (ret != null) {
                     list.addAll(ret);
@@ -143,7 +144,8 @@ public class MyMojo extends AbstractMojo {
     }
 
     public void execute() throws MojoExecutionException {
-        getLog().info("MyMojo run here");
+        getLog().info("generate restful services");
+        generateRepository();
         generateRestfulController();
     }
 
@@ -162,7 +164,7 @@ public class MyMojo extends AbstractMojo {
                 compilationUnit.findAll(ClassOrInterfaceDeclaration.class).stream()
                         .filter(c -> c.isAnnotationPresent(ServiceAnnotation))
                         .forEach(c -> {
-                            getLog().info(file.getAbsolutePath());
+                            getLog().debug("generate restful controller: " + file.getAbsolutePath());
                             generateRestfulControllerCode(compilationUnit, c);
                         });
             } catch (FileNotFoundException e) {
@@ -198,9 +200,13 @@ public class MyMojo extends AbstractMojo {
             }
 
             HashMap<String, String> imports = new HashMap<>();
-            imports.put("org.springframework.stereotype.Controller", "org.springframework.stereotype.Controller");
-            imports.put("org.springframework.web.bind.annotation.*", "org.springframework.web.bind.annotation.*");
-            imports.put("org.springframework.beans.factory.annotation.Autowired", "org.springframework.beans.factory.annotation.Autowired");
+            imports.put("com.furongsoft.base.entities.PageRequest", null);
+            imports.put("com.furongsoft.base.entities.RestResponse", null);
+            imports.put("com.furongsoft.base.entities.PageResponse", null);
+            imports.put("org.springframework.http.HttpStatus", null);
+            imports.put("org.springframework.stereotype.Controller", null);
+            imports.put("org.springframework.web.bind.annotation.*", null);
+            imports.put("org.springframework.beans.factory.annotation.Autowired", null);
             cu.getImports().forEach(importDeclaration -> {
                 imports.put(importDeclaration.getNameAsString(), importDeclaration.getNameAsString());
             });
@@ -210,7 +216,7 @@ public class MyMojo extends AbstractMojo {
             params.put("package", packageName);
             params.put("className", className);
             params.put("baseUrlPath", baseUrlPath.replace("\"", ""));
-            params.put("resourceName", genericTypes[0] + "s");
+            params.put("resourceName", genericTypes[0].toLowerCase() + "s");
             params.put("entityName", genericTypes[0]);
             params.put("imports", imports);
 
@@ -220,6 +226,83 @@ public class MyMojo extends AbstractMojo {
             }
 
             File newFile = new File(newPath, className + "Controller.java");
+            writer = new OutputStreamWriter(new FileOutputStream(newFile), "UTF-8");
+            template.process(params, writer);
+        } catch (IOException | TemplateException | NullPointerException e) {
+            getLog().error(e);
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.flush();
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * 生成数据仓库代码
+     */
+    private void generateRepository() {
+        List<File> files = scan(sourceDirectory);
+        if (files == null) {
+            return;
+        }
+
+        files.forEach(file -> {
+            try {
+                CompilationUnit compilationUnit = JavaParser.parse(file);
+                compilationUnit.findAll(ClassOrInterfaceDeclaration.class).stream()
+                        .filter(c -> c.isAnnotationPresent(EntityAnnotation))
+                        .forEach(c -> {
+                            getLog().debug("generate repository" + file.getAbsolutePath());
+                            generateRepositoryCode(compilationUnit, c);
+                        });
+            } catch (FileNotFoundException e) {
+                getLog().error(e);
+            }
+        });
+    }
+
+    /**
+     * 生成数据仓库代码
+     *
+     * @param cu 编译单元
+     * @param cd 类与接口定义
+     */
+    private void generateRepositoryCode(CompilationUnit cu, ClassOrInterfaceDeclaration cd) {
+        Writer writer = null;
+
+        try {
+            Configuration cfg = new Configuration(Configuration.VERSION_2_3_27);
+            cfg.setClassForTemplateLoading(getClass(), "/");
+            cfg.setDefaultEncoding("UTF-8");
+            cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+            cfg.setLogTemplateExceptions(false);
+            cfg.setWrapUncheckedExceptions(true);
+
+            String packageName = cu.getPackageDeclaration().isPresent() ? cu.getPackageDeclaration().get().getName().asString() : "";
+            String packagePath = packageName.replace('.', '/');
+            String className = cd.getNameAsString();
+
+            HashMap<String, String> imports = new HashMap<>();
+            imports.put("com.furongsoft.base.repositories.BaseRepository", null);
+            imports.put(packageName + "." + className, null);
+
+            Template template = cfg.getTemplate("repository.ftlh");
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("package", packageName);
+            params.put("className", className);
+            params.put("imports", imports);
+
+            File newPath = new File(outputDirectory, "generated-sources/" + packagePath);
+            if (!newPath.exists()) {
+                newPath.mkdirs();
+            }
+
+            File newFile = new File(newPath, className + "Repository.java");
             writer = new OutputStreamWriter(new FileOutputStream(newFile), "UTF-8");
             template.process(params, writer);
         } catch (IOException | TemplateException | NullPointerException e) {
