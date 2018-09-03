@@ -204,7 +204,6 @@ public class MyMojo extends AbstractMojo {
             imports.put("com.furongsoft.base.entities.RestResponse", null);
             imports.put("com.furongsoft.base.entities.PageResponse", null);
             imports.put("org.springframework.http.HttpStatus", null);
-            imports.put("org.springframework.stereotype.Controller", null);
             imports.put("org.springframework.web.bind.annotation.*", null);
             imports.put("org.springframework.beans.factory.annotation.Autowired", null);
             cu.getImports().forEach(importDeclaration -> {

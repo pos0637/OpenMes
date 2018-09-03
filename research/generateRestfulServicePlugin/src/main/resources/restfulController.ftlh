@@ -4,7 +4,7 @@ package ${package};
 import ${import};
 </#list>
 
-@Controller
+@RestController
 @RequestMapping("${baseUrlPath}")
 public class ${className}Controller {
     private final ${package}.${className} service;
