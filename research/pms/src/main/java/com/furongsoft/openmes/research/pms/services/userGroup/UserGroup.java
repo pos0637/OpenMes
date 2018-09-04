@@ -1,5 +1,6 @@
-package com.furongsoft.openmes.research.pms.services.user;
+package com.furongsoft.openmes.research.pms.services.userGroup;
 
+import com.furongsoft.base.annotations.RestfulEntity;
 import com.furongsoft.base.entities.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,15 +9,16 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- * 资源
+ * 用户组
  *
  * @author Alex
  */
+@RestfulEntity
 @Entity
-@Table(name = "t_sys_resource")
+@Table(name = "t_pms_user_group")
 @Getter
 @Setter
-public class Resource extends BaseEntity implements Serializable {
+public class UserGroup extends BaseEntity implements Serializable {
     /**
      * 索引
      */
@@ -24,10 +26,4 @@ public class Resource extends BaseEntity implements Serializable {
     @GeneratedValue
     @Column(name = "id", columnDefinition = "BIGINT(20) COMMENT '主键'")
     private long id;
-
-    /**
-     * 名称
-     */
-    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(64) COMMENT '名称'")
-    private String name;
 }
