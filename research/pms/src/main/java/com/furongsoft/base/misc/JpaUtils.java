@@ -1,19 +1,15 @@
 package com.furongsoft.base.misc;
 
-import com.querydsl.core.types.dsl.DateTimePath;
-import com.querydsl.core.types.dsl.EntityPathBase;
-import com.querydsl.core.types.dsl.NumberPath;
-import com.querydsl.core.types.dsl.StringPath;
-import org.springframework.data.querydsl.binding.QuerydslBindings;
+import org.springframework.data.jpa.domain.Specification;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.lang.annotation.*;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
 /**
@@ -22,17 +18,154 @@ import java.util.stream.Stream;
  * @author Alex
  */
 public class JpaUtils {
+    public static <T> Specification<T> generateSpecification(Map<String, Object> params, Class<T> clazz) {
+        Map<String, Field> fields = getAllFields(clazz);
+
+        return (root, criteriaQuery, criteriaBuilder) -> {
+            Predicate predicate = null;
+            for (String name : params.keySet()) {
+                if (!fields.containsKey(name)) {
+                    continue;
+                }
+
+                MatchType type = MatchType.none;
+                Annotation annotation = fields.get(name).getAnnotation(QueryField.class);
+                if (annotation != null) {
+                    type = ((QueryField) annotation).type();
+                }
+
+                Predicate p = getPredicate(criteriaBuilder, name, fields.get(name), params, root, type);
+                if (predicate == null) {
+                    predicate = p;
+                } else if (p != null) {
+                    predicate = criteriaBuilder.and(predicate, p);
+                }
+            }
+
+            return predicate;
+        };
+    }
+
+    /**
+     * 获取所有带有QueryField注解的字段
+     *
+     * @param clazz 类型
+     * @return 字段列表
+     */
+    private static Map<String, Field> getAllFields(Class<?> clazz) {
+        Map<String, Field> map = new HashMap<>();
+        Field[] fields = clazz.getDeclaredFields();
+        if ((fields != null) && (fields.length > 0)) {
+            Stream.of(fields).filter(field -> field.getAnnotation(QueryField.class) != null).forEach(field -> map.put(field.getName(), field));
+        }
+
+        Class<?> superClass = clazz.getSuperclass();
+        if (superClass == Object.class) {
+            return map;
+        }
+
+        // 递归查询父类的field列表
+        Map<String, Field> superFields = getAllFields(superClass);
+        if ((superFields != null) && !superFields.isEmpty()) {
+            map.putAll(superFields);
+        }
+
+        return map;
+    }
+
+    /**
+     * 获取查询条件
+     *
+     * @param criteriaBuilder 条件构造器
+     * @param name            字段名称
+     * @param field           字段描述
+     * @param params          参数
+     * @param root            根
+     * @param type            匹配类型
+     * @param <T>             实体类型
+     * @return 查询条件
+     */
+    private static <T> Predicate getPredicate(
+            CriteriaBuilder criteriaBuilder,
+            String name,
+            Field field,
+            Map<String, Object> params,
+            Root<T> root,
+            MatchType type) {
+        if (field.getType().equals(String.class)) {
+            switch (type) {
+                case equal:
+                    return criteriaBuilder.equal(root.get(name), params.get(name));
+                case noEqual:
+                    return criteriaBuilder.notEqual(root.get(name), params.get(name));
+                case like:
+                    return criteriaBuilder.like(root.get(name), "%" + params.get(name) + "%");
+                case notLike:
+                    return criteriaBuilder.notLike(root.get(name), "%" + params.get(name) + "%");
+                default:
+                    break;
+            }
+        } else if (field.getType().equals(Date.class)) {
+            switch (type) {
+                case equal:
+                    return criteriaBuilder.equal(root.get(name), (Date) params.get(name));
+                case noEqual:
+                    return criteriaBuilder.notEqual(root.get(name), (Date) params.get(name));
+                case gt:
+                    return criteriaBuilder.greaterThan(root.get(name), (Date) params.get(name));
+                case ge:
+                    return criteriaBuilder.greaterThanOrEqualTo(root.get(name), (Date) params.get(name));
+                case lt:
+                    return criteriaBuilder.lessThan(root.get(name), (Date) params.get(name));
+                case le:
+                    return criteriaBuilder.lessThanOrEqualTo(root.get(name), (Date) params.get(name));
+                default:
+                    break;
+            }
+        } else if (field.getType().equals(Boolean.class)) {
+            switch (type) {
+                case equal:
+                    return criteriaBuilder.equal(root.get(name), (Boolean) params.get(name));
+                case noEqual:
+                    return criteriaBuilder.notEqual(root.get(name), (Boolean) params.get(name));
+                default:
+                    break;
+            }
+        } else {
+            switch (type) {
+                case equal:
+                    return criteriaBuilder.equal(root.get(name), (Number) params.get(name));
+                case noEqual:
+                    return criteriaBuilder.notEqual(root.get(name), (Number) params.get(name));
+                case gt:
+                    return criteriaBuilder.gt(root.get(name), (Number) params.get(name));
+                case ge:
+                    return criteriaBuilder.ge(root.get(name), (Number) params.get(name));
+                case lt:
+                    return criteriaBuilder.lt(root.get(name), (Number) params.get(name));
+                case le:
+                    return criteriaBuilder.le(root.get(name), (Number) params.get(name));
+                default:
+                    break;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * 比较类型
      */
     public enum MatchType {
-        eq,
+        equal,
+        noEqual,
+        like,
+        notLike,
         gt,
         ge,
         lt,
         le,
-        like,
-        notLike
+        none
     }
 
     /**
@@ -44,7 +177,7 @@ public class JpaUtils {
         /**
          * @return 比较类型
          */
-        MatchType type() default MatchType.eq;
+        MatchType type() default MatchType.equal;
 
         /**
          * @return 是否可空
@@ -55,136 +188,5 @@ public class JpaUtils {
          * @return 是否允许空白
          */
         boolean allowEmpty() default false;
-    }
-
-    /**
-     * 绑定QueryDSL
-     *
-     * @param querydslBindings 绑定对象
-     * @param queryObject      查询对象
-     * @param <T>              查询对象类型
-     */
-    @SuppressWarnings("unchecked")
-    public static <T extends EntityPathBase<?>> void bindQuerydsl(QuerydslBindings querydslBindings, T queryObject) {
-        List<Field> fields = getAllFields(queryObject.getType());
-        if ((fields != null) && !fields.isEmpty()) {
-            fields.forEach(field -> {
-                try {
-                    Field queryField = queryObject.getClass().getField(field.getName());
-                    queryField.setAccessible(true);
-                    Object object = queryField.get(queryObject);
-                    MatchType type = field.getAnnotation(QueryField.class).type();
-
-                    if (object instanceof StringPath) {
-                        bindStringPath(querydslBindings, (StringPath) object, type);
-                    } else if (object instanceof NumberPath<?>) {
-                        bindNumberPath(querydslBindings, (NumberPath<?>) object, type);
-                    } else if (object instanceof DateTimePath<?>) {
-                        bindDatetimePath(querydslBindings, (DateTimePath<Date>) object, type);
-                    }
-                } catch (NoSuchFieldException | IllegalAccessException e) {
-                    Tracker.error(e);
-                }
-            });
-        }
-    }
-
-    /**
-     * 获取所有带有QueryField注解的字段
-     *
-     * @param clazz 类型
-     * @return 字段列表
-     */
-    private static List<Field> getAllFields(Class<?> clazz) {
-        List<Field> list = new ArrayList<>();
-        Field[] fields = clazz.getDeclaredFields();
-        if ((fields != null) && (fields.length > 0)) {
-            Stream.of(fields).filter(field -> field.getAnnotation(QueryField.class) != null).forEach(list::add);
-        }
-
-        Class<?> superClass = clazz.getSuperclass();
-        if (superClass == Object.class) {
-            return list;
-        }
-
-        // 递归查询父类的field列表
-        List<Field> superFields = getAllFields(superClass);
-        if ((superFields != null) && !superFields.isEmpty()) {
-            superFields.stream().filter(field -> !list.contains(field)).forEach(list::add);
-        }
-
-        return list;
-    }
-
-    /**
-     * 绑定字符串查询方法
-     *
-     * @param querydslBindings 绑定对象
-     * @param stringPath       字符串
-     * @param matchType        比较类型
-     */
-    private static void bindStringPath(QuerydslBindings querydslBindings, StringPath stringPath, MatchType matchType) {
-        switch (matchType) {
-            case like:
-                querydslBindings.bind(stringPath).first(((path, t) -> stringPath.like("%" + t + "%")));
-                break;
-            case notLike:
-                querydslBindings.bind(stringPath).first(((path, t) -> stringPath.notLike("%" + t + "%")));
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
-     * 绑定数值查询方法
-     *
-     * @param querydslBindings 绑定对象
-     * @param numberPath       数值
-     * @param matchType        比较类型
-     */
-    private static void bindNumberPath(QuerydslBindings querydslBindings, NumberPath<?> numberPath, MatchType matchType) {
-        switch (matchType) {
-            case gt:
-                querydslBindings.bind(numberPath).first(((path, t) -> numberPath.gt(t)));
-                break;
-            case ge:
-                querydslBindings.bind(numberPath).first(((path, t) -> numberPath.goe(t)));
-                break;
-            case lt:
-                querydslBindings.bind(numberPath).first(((path, t) -> numberPath.lt(t)));
-                break;
-            case le:
-                querydslBindings.bind(numberPath).first(((path, t) -> numberPath.loe(t)));
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
-     * 绑定日期查询方法
-     *
-     * @param querydslBindings 绑定对象
-     * @param dateTimePath     日期
-     * @param matchType        比较类型
-     */
-    private static void bindDatetimePath(QuerydslBindings querydslBindings, DateTimePath<Date> dateTimePath, MatchType matchType) {
-        switch (matchType) {
-            case gt:
-                querydslBindings.bind(dateTimePath).first(((path, t) -> dateTimePath.gt(t)));
-                break;
-            case ge:
-                querydslBindings.bind(dateTimePath).first(((path, t) -> dateTimePath.goe(t)));
-                break;
-            case lt:
-                querydslBindings.bind(dateTimePath).first(((path, t) -> dateTimePath.lt(t)));
-                break;
-            case le:
-                querydslBindings.bind(dateTimePath).first(((path, t) -> dateTimePath.loe(t)));
-                break;
-            default:
-                break;
-        }
     }
 }

@@ -1,9 +1,11 @@
 package com.furongsoft.base.services;
 
+import com.furongsoft.base.misc.JpaUtils;
 import com.furongsoft.base.repositories.BaseRepository;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -30,59 +32,15 @@ public class BaseService<T, V> implements BaseRepository<T, V> {
     private BaseService() {
     }
 
-    public Page<T> findAll(Map<String, Object> params) {
-        return null;
+    public Page<T> findAll(Map<String, Object> params, Class<T> clazz) {
+        if (params.containsKey("pageNum") && params.containsKey("pageSize")) {
+            return findAll(JpaUtils.generateSpecification(params, clazz), PageRequest.of((Integer) params.get("pageNum"), (Integer) params.get("pageSize")));
+        } else {
+            return findAll(JpaUtils.generateSpecification(params, clazz), PageRequest.of(0, Integer.MAX_VALUE));
+        }
     }
 
-    public void deleteBatch(String delete) {
-    }
-
-    @Override
-    @NonNull
-    public Optional<T> findOne(@NonNull Predicate predicate) {
-        return repository.findOne(predicate);
-    }
-
-    @Override
-    @NonNull
-    public Iterable<T> findAll(@NonNull Predicate predicate) {
-        return repository.findAll(predicate);
-    }
-
-    @Override
-    @NonNull
-    public Iterable<T> findAll(@NonNull Predicate predicate, @NonNull Sort sort) {
-        return repository.findAll(predicate, sort);
-    }
-
-    @Override
-    @NonNull
-    public Iterable<T> findAll(@NonNull Predicate predicate, @NonNull OrderSpecifier<?>... orders) {
-        return repository.findAll(predicate, orders);
-    }
-
-    @Override
-    @NonNull
-    public Iterable<T> findAll(@NonNull OrderSpecifier<?>... orders) {
-        return repository.findAll(orders);
-    }
-
-    @Override
-    @NonNull
-    public Page<T> findAll(@NonNull Predicate predicate, @NonNull Pageable pageable) {
-        return repository.findAll(predicate, pageable);
-    }
-
-    @Override
-    @NonNull
-    public long count(@NonNull Predicate predicate) {
-        return repository.count(predicate);
-    }
-
-    @Override
-    @NonNull
-    public boolean exists(@NonNull Predicate predicate) {
-        return repository.exists(predicate);
+    public void deleteInBatch(String delete) {
     }
 
     @Override
