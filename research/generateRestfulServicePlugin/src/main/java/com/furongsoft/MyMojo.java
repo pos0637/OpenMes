@@ -220,7 +220,7 @@ public class MyMojo extends AbstractMojo {
             params.put("pk", genericTypes[1]);
             params.put("imports", imports);
 
-            File newPath = new File(outputDirectory, "generated-sources/" + packagePath);
+            File newPath = new File(outputDirectory, packagePath);
             if (!newPath.exists()) {
                 newPath.mkdirs();
             }
@@ -297,7 +297,7 @@ public class MyMojo extends AbstractMojo {
             params.put("className", className);
             params.put("imports", imports);
 
-            File newPath = new File(outputDirectory, "generated-sources/" + packagePath);
+            File newPath = new File(outputDirectory, packagePath);
             if (!newPath.exists()) {
                 newPath.mkdirs();
             }
