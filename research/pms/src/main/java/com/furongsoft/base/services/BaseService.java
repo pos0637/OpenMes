@@ -2,8 +2,6 @@ package com.furongsoft.base.services;
 
 import com.furongsoft.base.misc.JpaUtils;
 import com.furongsoft.base.repositories.BaseRepository;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,12 +30,22 @@ public class BaseService<T, V> implements BaseRepository<T, V> {
     private BaseService() {
     }
 
+    /**
+     * 查找所有数据
+     *
+     * @param params 参数列表
+     * @param clazz  实体类型
+     * @return 所有数据
+     */
     public Page<T> findAll(Map<String, Object> params, Class<T> clazz) {
+        Pageable pageable;
         if (params.containsKey("pageNum") && params.containsKey("pageSize")) {
-            return findAll(JpaUtils.generateSpecification(params, clazz), PageRequest.of((Integer) params.get("pageNum"), (Integer) params.get("pageSize")));
+            pageable = PageRequest.of((Integer) params.get("pageNum"), (Integer) params.get("pageSize"));
         } else {
-            return findAll(JpaUtils.generateSpecification(params, clazz), PageRequest.of(0, Integer.MAX_VALUE));
+            pageable = PageRequest.of(0, Integer.MAX_VALUE);
         }
+
+        return findAll(JpaUtils.generateSpecification(params, clazz), pageable);
     }
 
     public void deleteInBatch(String delete) {

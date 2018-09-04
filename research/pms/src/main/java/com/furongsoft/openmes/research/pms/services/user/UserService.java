@@ -1,9 +1,7 @@
-package com.furongsoft.openmes.research.pms;
+package com.furongsoft.openmes.research.pms.services.user;
 
 import com.furongsoft.base.annotations.RestfulService;
 import com.furongsoft.base.services.BaseService;
-import com.furongsoft.rbac.entities.User;
-import com.furongsoft.rbac.entities.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
