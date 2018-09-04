@@ -16,7 +16,7 @@ public class ${className}Controller {
 
     @GetMapping("/${resourceName}")
     public PageResponse findAll(@RequestParam java.util.Map<String, Object> params) {
-        return new PageResponse(HttpStatus.OK, service.findAll(params));
+        return new PageResponse(HttpStatus.OK, service.findAll(params, ${entityName}.class));
     }
 
     @GetMapping("/${resourceName}/{id}")
@@ -42,7 +42,7 @@ public class ${className}Controller {
 
     @PostMapping("/${resourceName}/batch")
     public RestResponse deleteBatch(@RequestParam String delete) {
-        service.deleteBatch(delete);
+        service.deleteInBatch(delete);
         return new RestResponse(HttpStatus.OK);
     }
 }
