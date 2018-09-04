@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.furongsoft.base.annotations.RestfulEntity;
 import com.furongsoft.base.entities.BaseEntity;
-import com.furongsoft.openmes.research.pms.services.user.Resource;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
@@ -18,6 +17,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 任务
@@ -49,9 +49,8 @@ public class Task extends BaseEntity implements Serializable {
     /**
      * 负责人组索引
      */
-    @JsonSerialize(using = ToStringSerializer.class)
     @Column(columnDefinition = "BIGINT(20) COMMENT '负责人组索引'")
-    private Long ownerId;
+    private Long ownersId;
 
     /**
      * 预期开始时间
@@ -113,14 +112,14 @@ public class Task extends BaseEntity implements Serializable {
     /**
      * 类型
      */
-    @Column(columnDefinition = "INT(10) default 0 COMMENT '类型")
+    @Column(columnDefinition = "INT(10) default 0 COMMENT '类型'")
     private Integer type;
 
     /**
      * 优先级
      */
     @NotNull(message = "优先级不能为空")
-    @Column(columnDefinition = "INT(10) default 0 COMMENT '优先级")
+    @Column(columnDefinition = "INT(10) default 0 COMMENT '优先级'")
     private Integer priority;
 
     /**
@@ -136,18 +135,33 @@ public class Task extends BaseEntity implements Serializable {
     private Long moduleId;
 
     /**
-     * 负责人索引集合
+     * 负责人组
      */
-    @Transient
-    private List<Long> ownersIdList;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "t_pms_user_group_user",
+            joinColumns = @JoinColumn(
+                    name = "userGroupId",
+                    referencedColumnName = "ownersId",
+                    insertable = false,
+                    updatable = false,
+                    foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT)),
+            inverseJoinColumns = @JoinColumn(
+                    name = "userId",
+                    referencedColumnName = "id",
+                    insertable = false,
+                    updatable = false,
+                    foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT)),
+            foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT),
+            inverseForeignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT)
+    )
+    @Fetch(FetchMode.JOIN)
+    private Set<User> owners;
 
     /**
      * 负责人索引集合
      */
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "iconId", insertable = false, updatable = false, foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
-    @Fetch(FetchMode.JOIN)
-    private List<User> owners;
+    @Transient
+    private List<Long> ownersIdList;
 
     /**
      * 验收人id集合
