@@ -1,6 +1,7 @@
 package com.furongsoft.base.entities;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
  */
 @Getter
 @Setter
+@NoArgsConstructor
 public class RestResponse {
     /**
      * HTTP状态码

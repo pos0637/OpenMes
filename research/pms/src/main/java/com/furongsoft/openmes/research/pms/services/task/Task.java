@@ -47,10 +47,42 @@ public class Task extends BaseEntity implements Serializable {
     private String name;
 
     /**
-     * 负责人组索引
+     * 描述
      */
-    @Column(columnDefinition = "BIGINT(20) COMMENT '负责人组索引'")
-    private Long ownersId;
+    @Column(columnDefinition = "VARCHAR(128) COMMENT '描述'")
+    private String description;
+
+    /**
+     * 状态
+     */
+    @NotNull(message = "状态不能为空")
+    @Column(nullable = false, columnDefinition = "INT(1) default 0 COMMENT '状态:0 启用, 1 禁用'")
+    private Long state;
+
+    /**
+     * 类型
+     */
+    @Column(nullable = false, columnDefinition = "INT(10) default 0 COMMENT '类型'")
+    private Long type;
+
+    /**
+     * 优先级
+     */
+    @NotNull(message = "优先级不能为空")
+    @Column(nullable = false, columnDefinition = "INT(10) default 0 COMMENT '优先级'")
+    private Long priority;
+
+    /**
+     * 删除标志位
+     */
+    @Column(nullable = false, columnDefinition = "INT(1) default 0 COMMENT '删除标志位'")
+    private Integer enable;
+
+    /**
+     * 从属模块
+     */
+    @Column(columnDefinition = "BIGINT(20) COMMENT '从属模块'")
+    private Long moduleId;
 
     /**
      * 预期开始时间
@@ -61,13 +93,6 @@ public class Task extends BaseEntity implements Serializable {
     private Date startTime;
 
     /**
-     * 实际开始时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
-    @Column(nullable = false, columnDefinition = "DATETIME COMMENT '实际开始时间'")
-    private Date realStartTime;
-
-    /**
      * 预期结束时间
      */
     @NotNull(message = "预期结束时间不能为空")
@@ -76,63 +101,24 @@ public class Task extends BaseEntity implements Serializable {
     private Date endTime;
 
     /**
+     * 实际开始时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @Column(columnDefinition = "DATETIME COMMENT '实际开始时间'")
+    private Date realStartTime;
+
+    /**
      * 实际结束时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
-    @Column(nullable = false, columnDefinition = "DATETIME COMMENT '实际结束时间'")
+    @Column(columnDefinition = "DATETIME COMMENT '实际结束时间'")
     private Date realEndTime;
 
     /**
-     * 描述
+     * 负责人组索引
      */
-    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(128) COMMENT '描述'")
-    private String description;
-
-    /**
-     * 附件组索引
-     */
-    @JsonSerialize(using = ToStringSerializer.class)
-    @Column(columnDefinition = "BIGINT(20) COMMENT '附件组索引'")
-    private Long attachmentsId;
-
-    /**
-     * 验收人组索引
-     */
-    @JsonSerialize(using = ToStringSerializer.class)
-    @Column(columnDefinition = "BIGINT(20) COMMENT '验收人组索引'")
-    private Long acceptersId;
-
-    /**
-     * 状态
-     */
-    @NotNull(message = "状态不能为空")
-    @Column(columnDefinition = "INT(1) default 0 COMMENT '状态:0 启用, 1 禁用'")
-    private Integer state;
-
-    /**
-     * 类型
-     */
-    @Column(columnDefinition = "INT(10) default 0 COMMENT '类型'")
-    private Integer type;
-
-    /**
-     * 优先级
-     */
-    @NotNull(message = "优先级不能为空")
-    @Column(columnDefinition = "INT(10) default 0 COMMENT '优先级'")
-    private Integer priority;
-
-    /**
-     * 删除标志位
-     */
-    @Column(columnDefinition = "INT(1) default 0 COMMENT '删除标志位'")
-    private Integer enable;
-
-    /**
-     * 从属模块
-     */
-    @Column(columnDefinition = "BIGINT(20) COMMENT '从属模块'")
-    private Long moduleId;
+    @Column(columnDefinition = "BIGINT(20) COMMENT '负责人组索引'")
+    private Long ownersId;
 
     /**
      * 负责人组
@@ -158,33 +144,40 @@ public class Task extends BaseEntity implements Serializable {
     private Set<User> owners;
 
     /**
+     * 验收人组索引
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    @Column(columnDefinition = "BIGINT(20) COMMENT '验收人组索引'")
+    private Long acceptersId;
+
+    /**
+     * 附件组索引
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    @Column(columnDefinition = "BIGINT(20) COMMENT '附件组索引'")
+    private Long attachmentsId;
+
+    /**
      * 负责人索引集合
      */
     @Transient
     private List<Long> ownersIdList;
 
     /**
-     * 验收人id集合
+     * 验收人索引集合
      */
     @Transient
     private List<Long> accepterIdList;
 
     /**
-     * 需求id集合
+     * 需求索引集合
      */
     @Transient
     private List<Long> requirementIdList;
 
     /**
-     * 附件id集合
+     * 附件索引集合
      */
     @Transient
     private List<Long> attachmentsIdList;
-
-    /**
-     * 项目ID
-     */
-    @Transient
-    @NotNull(message = "项目ID不能为空")
-    private Long projectId;
 }

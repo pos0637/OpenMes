@@ -7,6 +7,7 @@ import com.furongsoft.openmes.research.pms.services.userGroup.UserGroupRepositor
 import com.furongsoft.openmes.research.pms.services.userGroup.UserGroupUser;
 import com.furongsoft.openmes.research.pms.services.userGroup.UserGroupUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +21,10 @@ public class TaskService extends BaseService<Task, Long> {
     private final UserGroupUserRepository userGroupUserRepository;
 
     @Autowired
-    public TaskService(TaskRepository repository, UserGroupRepository userGroupRepository, UserGroupUserRepository userGroupUserRepository) {
+    public TaskService(
+            @Qualifier("com.furongsoft.openmes.research.pms.services.task.TaskRepository") TaskRepository repository,
+            @Qualifier("com.furongsoft.openmes.research.pms.services.userGroup.UserGroupRepository") UserGroupRepository userGroupRepository,
+            @Qualifier("com.furongsoft.openmes.research.pms.services.userGroup.UserGroupUserRepository") UserGroupUserRepository userGroupUserRepository) {
         super(repository);
         this.userGroupRepository = userGroupRepository;
         this.userGroupUserRepository = userGroupUserRepository;
@@ -34,7 +38,16 @@ public class TaskService extends BaseService<Task, Long> {
         return super.save(entity);
     }
 
+    /**
+     * 创建用户组
+     *
+     * @param users 用户索引列表
+     */
     private void saveUserGroup(List<Long> users) {
+        if ((users == null) || (users.size() == 0)) {
+            return;
+        }
+
         UserGroup userGroup = new UserGroup();
         userGroupRepository.save(userGroup);
 
