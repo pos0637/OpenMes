@@ -4,5 +4,6 @@ package ${package};
 import ${import};
 </#list>
 
+@Repository("${package}.${className}Repository")
 public interface ${className}Repository extends BaseRepository<${className}, Long> {
 }

@@ -289,6 +289,7 @@ public class MyMojo extends AbstractMojo {
 
             HashMap<String, String> imports = new HashMap<>();
             imports.put("com.furongsoft.base.repositories.BaseRepository", null);
+            imports.put("org.springframework.stereotype.Repository", null);
             imports.put(packageName + "." + className, null);
 
             Template template = cfg.getTemplate("repository.ftlh");
