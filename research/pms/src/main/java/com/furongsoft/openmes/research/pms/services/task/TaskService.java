@@ -38,6 +38,14 @@ public class TaskService extends BaseService<Task, Long> {
         return super.save(entity);
     }
 
+    @Override
+    public void deleteById(Long aLong) {
+        repository.findById(aLong).ifPresent(task -> {
+            task.setEnable(1);
+            repository.save(task);
+        });
+    }
+
     /**
      * 创建用户组
      *

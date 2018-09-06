@@ -21,7 +21,7 @@ import java.util.Optional;
  * @author Alex
  */
 public class BaseService<T, V> implements BaseRepository<T, V> {
-    private BaseRepository repository;
+    protected BaseRepository<T, V> repository;
 
     public BaseService(BaseRepository repository) {
         this.repository = repository;
