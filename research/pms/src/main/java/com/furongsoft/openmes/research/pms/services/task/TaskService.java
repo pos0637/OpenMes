@@ -32,8 +32,8 @@ public class TaskService extends BaseService<Task, Long> {
 
     @Override
     public <S extends Task> S save(S entity) {
-        saveUserGroup(entity.getOwnersIdList());
-        saveUserGroup(entity.getAccepterIdList());
+        entity.setOwnersId(saveUserGroup(entity.getOwnersIdList()));
+        entity.setAcceptersId(saveUserGroup(entity.getAccepterIdList()));
 
         return super.save(entity);
     }
@@ -42,10 +42,11 @@ public class TaskService extends BaseService<Task, Long> {
      * 创建用户组
      *
      * @param users 用户索引列表
+     * @return 用户组索引
      */
-    private void saveUserGroup(List<Long> users) {
+    private Long saveUserGroup(List<Long> users) {
         if ((users == null) || (users.size() == 0)) {
-            return;
+            return null;
         }
 
         UserGroup userGroup = new UserGroup();
@@ -57,5 +58,7 @@ public class TaskService extends BaseService<Task, Long> {
             userGroupUser.setUserId(id);
             userGroupUserRepository.save(userGroupUser);
         });
+
+        return userGroup.getId();
     }
 }
