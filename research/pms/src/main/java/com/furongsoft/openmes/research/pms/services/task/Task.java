@@ -151,6 +151,29 @@ public class Task extends BaseEntity implements Serializable {
     private Long acceptersId;
 
     /**
+     * 验收人组
+     */
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "t_pms_user_group_user",
+            joinColumns = @JoinColumn(
+                    name = "userGroupId",
+                    referencedColumnName = "acceptersId",
+                    insertable = false,
+                    updatable = false,
+                    foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT)),
+            inverseJoinColumns = @JoinColumn(
+                    name = "userId",
+                    referencedColumnName = "id",
+                    insertable = false,
+                    updatable = false,
+                    foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT)),
+            foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT),
+            inverseForeignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT)
+    )
+    @Fetch(FetchMode.JOIN)
+    private Set<User> accepters;
+
+    /**
      * 附件组索引
      */
     @JsonSerialize(using = ToStringSerializer.class)

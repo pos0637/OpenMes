@@ -23,7 +23,7 @@ import java.util.Optional;
 public class BaseService<T, V> implements BaseRepository<T, V> {
     protected BaseRepository<T, V> repository;
 
-    public BaseService(BaseRepository repository) {
+    public BaseService(BaseRepository<T, V> repository) {
         this.repository = repository;
     }
 
