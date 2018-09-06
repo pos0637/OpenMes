@@ -25,12 +25,12 @@ public class ${className}Controller {
     }
 
     @PostMapping("/${resourceName}")
-    public RestResponse save(${entityName} entity) {
+    public RestResponse save(@RequestBody ${entityName} entity) {
         return new RestResponse(HttpStatus.OK, null, service.save(entity));
     }
 
     @PutMapping("/${resourceName}")
-    public RestResponse edit(${entityName} entity) {
+    public RestResponse edit(@RequestBody ${entityName} entity) {
         return new RestResponse(HttpStatus.OK, null, service.save(entity));
     }
 
