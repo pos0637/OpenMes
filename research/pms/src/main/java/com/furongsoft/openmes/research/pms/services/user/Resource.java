@@ -1,6 +1,6 @@
 package com.furongsoft.openmes.research.pms.services.user;
 
-import com.furongsoft.base.entities.BaseEntity;
+import com.furongsoft.core.entities.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 

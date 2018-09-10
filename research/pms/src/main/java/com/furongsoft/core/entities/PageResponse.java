@@ -1,4 +1,4 @@
-package com.furongsoft.base.entities;
+package com.furongsoft.core.entities;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

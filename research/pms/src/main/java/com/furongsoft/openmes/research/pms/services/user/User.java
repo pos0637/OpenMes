@@ -1,8 +1,8 @@
 package com.furongsoft.openmes.research.pms.services.user;
 
-import com.furongsoft.base.annotations.RestfulEntity;
-import com.furongsoft.base.entities.BaseEntity;
-import com.furongsoft.base.misc.JpaUtils;
+import com.furongsoft.core.annotations.RestfulEntity;
+import com.furongsoft.core.entities.BaseEntity;
+import com.furongsoft.core.misc.JpaUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;

@@ -1,7 +1,7 @@
 package com.furongsoft.openmes.research.pms.services.task;
 
 import com.alibaba.fastjson.JSON;
-import com.furongsoft.base.entities.RestResponse;
+import com.furongsoft.core.entities.RestResponse;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;

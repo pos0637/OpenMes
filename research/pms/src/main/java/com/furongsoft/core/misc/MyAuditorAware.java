@@ -1,4 +1,4 @@
-package com.furongsoft.base.misc;
+package com.furongsoft.core.misc;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;

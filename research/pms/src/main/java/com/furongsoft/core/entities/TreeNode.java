@@ -1,4 +1,4 @@
-package com.furongsoft.base.entities;
+package com.furongsoft.core.entities;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Getter;

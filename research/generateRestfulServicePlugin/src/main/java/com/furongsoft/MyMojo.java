@@ -200,9 +200,9 @@ public class MyMojo extends AbstractMojo {
             }
 
             HashMap<String, String> imports = new HashMap<>();
-            imports.put("com.furongsoft.base.entities.PageRequest", null);
-            imports.put("com.furongsoft.base.entities.RestResponse", null);
-            imports.put("com.furongsoft.base.entities.PageResponse", null);
+            imports.put("com.furongsoft.core.entities.PageRequest", null);
+            imports.put("com.furongsoft.core.entities.RestResponse", null);
+            imports.put("com.furongsoft.core.entities.PageResponse", null);
             imports.put("org.springframework.http.HttpStatus", null);
             imports.put("org.springframework.web.bind.annotation.*", null);
             imports.put("org.springframework.beans.factory.annotation.Autowired", null);
@@ -288,7 +288,7 @@ public class MyMojo extends AbstractMojo {
             String className = cd.getNameAsString();
 
             HashMap<String, String> imports = new HashMap<>();
-            imports.put("com.furongsoft.base.repositories.BaseRepository", null);
+            imports.put("com.furongsoft.core.repositories.BaseRepository", null);
             imports.put("org.springframework.stereotype.Repository", null);
             imports.put(packageName + "." + className, null);
 

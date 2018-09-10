@@ -1,4 +1,4 @@
-package com.furongsoft.base.misc;
+package com.furongsoft.core.misc;
 
 import org.springframework.data.jpa.domain.Specification;
 

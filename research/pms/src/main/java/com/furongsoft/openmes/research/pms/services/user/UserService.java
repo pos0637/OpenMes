@@ -1,7 +1,7 @@
 package com.furongsoft.openmes.research.pms.services.user;
 
-import com.furongsoft.base.annotations.RestfulService;
-import com.furongsoft.base.services.BaseService;
+import com.furongsoft.core.annotations.RestfulService;
+import com.furongsoft.core.services.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;

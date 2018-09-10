@@ -1,4 +1,4 @@
-package com.furongsoft.base.repositories;
+package com.furongsoft.core.repositories;
 
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;

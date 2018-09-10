@@ -1,7 +1,7 @@
-package com.furongsoft.base.services;
+package com.furongsoft.core.services;
 
-import com.furongsoft.base.misc.JpaUtils;
-import com.furongsoft.base.repositories.BaseRepository;
+import com.furongsoft.core.misc.JpaUtils;
+import com.furongsoft.core.repositories.BaseRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

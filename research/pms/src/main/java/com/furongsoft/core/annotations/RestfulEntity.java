@@ -1,4 +1,4 @@
-package com.furongsoft.base.annotations;
+package com.furongsoft.core.annotations;
 
 import java.lang.annotation.*;
 

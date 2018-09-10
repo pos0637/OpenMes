@@ -1,4 +1,4 @@
-package com.furongsoft.base.entities;
+package com.furongsoft.core.entities;
 
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.enums.FieldFill;

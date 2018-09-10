@@ -1,8 +1,8 @@
 package com.furongsoft.rbac.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.furongsoft.base.annotations.RestfulEntity;
-import com.furongsoft.base.entities.BaseEntity;
+import com.furongsoft.core.annotations.RestfulEntity;
+import com.furongsoft.core.entities.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 

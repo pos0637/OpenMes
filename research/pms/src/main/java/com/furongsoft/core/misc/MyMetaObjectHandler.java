@@ -1,4 +1,4 @@
-package com.furongsoft.base.misc;
+package com.furongsoft.core.misc;
 
 import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;

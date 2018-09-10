@@ -1,4 +1,4 @@
-package com.furongsoft.base.entities;
+package com.furongsoft.core.entities;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import lombok.Getter;

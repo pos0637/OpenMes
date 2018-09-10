@@ -1,7 +1,7 @@
 package com.furongsoft.openmes.research.pms.services.task;
 
-import com.furongsoft.base.annotations.RestfulService;
-import com.furongsoft.base.services.BaseService;
+import com.furongsoft.core.annotations.RestfulService;
+import com.furongsoft.core.services.BaseService;
 import com.furongsoft.openmes.research.pms.services.userGroup.UserGroup;
 import com.furongsoft.openmes.research.pms.services.userGroup.UserGroupRepository;
 import com.furongsoft.openmes.research.pms.services.userGroup.UserGroupUser;

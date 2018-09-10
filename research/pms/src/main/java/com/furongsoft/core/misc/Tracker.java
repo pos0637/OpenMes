@@ -1,4 +1,4 @@
-package com.furongsoft.base.misc;
+package com.furongsoft.core.misc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package com.furongsoft.base.misc;
+package com.furongsoft.core.misc;
 
 /**
  * 字符串工具类
