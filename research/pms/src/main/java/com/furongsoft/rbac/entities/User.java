@@ -1,6 +1,5 @@
 package com.furongsoft.rbac.entities;
 
-import com.baomidou.mybatisplus.annotations.TableName;
 import com.furongsoft.core.annotations.RestfulEntity;
 import com.furongsoft.core.entities.BaseEntity;
 import com.furongsoft.core.misc.JpaUtils;
