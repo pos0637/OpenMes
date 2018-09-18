@@ -6,6 +6,7 @@ import com.furongsoft.ai.facerecognition.entities.SearchFaceResponse;
 import com.furongsoft.ai.facerecognition.services.FaceRecognitionService;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ import java.util.List;
  * @author Alex
  */
 @Service
-public class BaiduFaceRecognitionService implements FaceRecognitionService {
+public class BaiduFaceRecognitionService implements InitializingBean, FaceRecognitionService {
     @Value("${ai.face-recognition.baidu.app-id}")
     private String appId;
 
@@ -36,12 +37,6 @@ public class BaiduFaceRecognitionService implements FaceRecognitionService {
     private int timeout;
 
     private AipFace client;
-
-    public BaiduFaceRecognitionService() {
-        client = new AipFace(appId, apiKey, secretKey);
-        client.setConnectionTimeoutInMillis(timeout);
-        client.setSocketTimeoutInMillis(timeout);
-    }
 
     @Override
     public AddFaceResponse addFace(String image, String userId, String information) {
@@ -148,5 +143,12 @@ public class BaiduFaceRecognitionService implements FaceRecognitionService {
         }
 
         return 0;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        client = new AipFace(appId, apiKey, secretKey);
+        client.setConnectionTimeoutInMillis(timeout);
+        client.setSocketTimeoutInMillis(timeout);
     }
 }
