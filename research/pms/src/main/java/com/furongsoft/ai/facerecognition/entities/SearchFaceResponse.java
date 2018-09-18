@@ -1,5 +1,6 @@
 package com.furongsoft.ai.facerecognition.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,6 +26,7 @@ public class SearchFaceResponse {
      */
     @Getter
     @Setter
+    @AllArgsConstructor
     public static class Face {
         /**
          * 用户索引

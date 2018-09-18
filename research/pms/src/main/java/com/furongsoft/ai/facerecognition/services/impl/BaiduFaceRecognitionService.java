@@ -76,26 +76,77 @@ public class BaiduFaceRecognitionService implements FaceRecognitionService {
 
     @Override
     public boolean deleteFaces(String userId, String faceId) {
-        return false;
+        JSONObject res = client.faceDelete(userId, groupId, faceId, null);
+        return (res != null) && !res.get("error_code").toString().equals("0");
     }
 
     @Override
     public boolean deleteUser(String userId) {
-        return false;
+        JSONObject res = client.deleteUser(groupId, userId, null);
+        return (res != null) && !res.get("error_code").toString().equals("0");
     }
 
     @Override
     public List<String> getFaces(String userId) {
-        return null;
+        JSONObject res = client.faceGetlist(userId, groupId, null);
+        if (res == null) {
+            return null;
+        }
+
+        JSONArray array = res.getJSONArray("face_list");
+        if (array == null) {
+            return null;
+        }
+
+        List<String> list = new LinkedList<>();
+        for (int i = 0; i < array.length(); ++i) {
+            JSONObject object = array.getJSONObject(i);
+            list.add(object.get("face_token").toString());
+        }
+
+        return list;
     }
 
     @Override
     public SearchFaceResponse searchUser(String image) {
-        return null;
+        JSONObject res = client.search(image, "BASE64", groupId, null);
+        if (res == null) {
+            return null;
+        }
+
+        SearchFaceResponse response = new SearchFaceResponse();
+        JSONArray array = res.getJSONArray("user_list");
+        if (array != null) {
+            List<SearchFaceResponse.Face> list = new LinkedList<>();
+            for (int i = 0; i < array.length(); ++i) {
+                JSONObject object = array.getJSONObject(i);
+                list.add(new SearchFaceResponse.Face(
+                        object.get("user_id").toString(),
+                        Double.parseDouble(object.get("score").toString())
+                ));
+            }
+            response.setFaces(list);
+        }
+
+        return response;
     }
 
     @Override
     public double checkUser(String userId, String image) {
+        HashMap<String, String> options = new HashMap<>(1);
+        options.put("user_id", userId);
+
+        JSONObject res = client.search(image, "BASE64", groupId, options);
+        if (res == null) {
+            return 0;
+        }
+
+        JSONArray array = res.getJSONArray("user_list");
+        if ((array != null) && (array.length() > 0)) {
+            JSONObject object = array.getJSONObject(0);
+            return Double.parseDouble(object.get("score").toString());
+        }
+
         return 0;
     }
 }
