@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 /**
  * 添加人脸响应信息
  *
@@ -22,7 +20,7 @@ public class AddFaceResponse {
     /**
      * 人脸位置
      */
-    private List<Location> locations;
+    private Location location;
 
     /**
      * 人脸位置

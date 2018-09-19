@@ -48,37 +48,40 @@ public class BaiduFaceRecognitionService implements InitializingBean, FaceRecogn
             return null;
         }
 
-        AddFaceResponse response = new AddFaceResponse();
-        response.setFaceId(res.get("face_token").toString());
-        JSONArray array = res.getJSONArray("location");
-        if (array != null) {
-            List<AddFaceResponse.Location> list = new LinkedList<>();
-            for (int i = 0; i < array.length(); ++i) {
-                JSONObject object = array.getJSONObject(i);
-                list.add(new AddFaceResponse.Location(
-                        Double.parseDouble(object.get("left").toString()),
-                        Double.parseDouble(object.get("top").toString()),
-                        Double.parseDouble(object.get("width").toString()),
-                        Double.parseDouble(object.get("height").toString()),
-                        Integer.parseInt(object.get("rotation").toString())
-                ));
-            }
-            response.setLocations(list);
+        if (!res.get("error_code").toString().equals("0")) {
+            return null;
         }
+
+        JSONObject result = res.getJSONObject("result");
+        if (result == null) {
+            return null;
+        }
+
+        AddFaceResponse response = new AddFaceResponse();
+        response.setFaceId(result.get("face_token").toString());
+
+        JSONObject location = result.getJSONObject("location");
+        response.setLocation(new AddFaceResponse.Location(
+                Double.parseDouble(location.get("left").toString()),
+                Double.parseDouble(location.get("top").toString()),
+                Double.parseDouble(location.get("width").toString()),
+                Double.parseDouble(location.get("height").toString()),
+                Integer.parseInt(location.get("rotation").toString())
+        ));
 
         return response;
     }
 
     @Override
-    public boolean deleteFaces(String userId, String faceId) {
+    public boolean deleteFace(String userId, String faceId) {
         JSONObject res = client.faceDelete(userId, groupId, faceId, null);
-        return (res != null) && !res.get("error_code").toString().equals("0");
+        return (res != null) && res.get("error_code").toString().equals("0");
     }
 
     @Override
     public boolean deleteUser(String userId) {
         JSONObject res = client.deleteUser(groupId, userId, null);
-        return (res != null) && !res.get("error_code").toString().equals("0");
+        return (res != null) && res.get("error_code").toString().equals("0");
     }
 
     @Override
@@ -88,7 +91,16 @@ public class BaiduFaceRecognitionService implements InitializingBean, FaceRecogn
             return null;
         }
 
-        JSONArray array = res.getJSONArray("face_list");
+        if (!res.get("error_code").toString().equals("0")) {
+            return null;
+        }
+
+        JSONObject result = res.getJSONObject("result");
+        if (result == null) {
+            return null;
+        }
+
+        JSONArray array = result.getJSONArray("face_list");
         if (array == null) {
             return null;
         }
@@ -109,8 +121,17 @@ public class BaiduFaceRecognitionService implements InitializingBean, FaceRecogn
             return null;
         }
 
+        if (!res.get("error_code").toString().equals("0")) {
+            return null;
+        }
+
+        JSONObject result = res.getJSONObject("result");
+        if (result == null) {
+            return null;
+        }
+
         SearchFaceResponse response = new SearchFaceResponse();
-        JSONArray array = res.getJSONArray("user_list");
+        JSONArray array = result.getJSONArray("user_list");
         if (array != null) {
             List<SearchFaceResponse.Face> list = new LinkedList<>();
             for (int i = 0; i < array.length(); ++i) {
@@ -136,7 +157,16 @@ public class BaiduFaceRecognitionService implements InitializingBean, FaceRecogn
             return 0;
         }
 
-        JSONArray array = res.getJSONArray("user_list");
+        if (!res.get("error_code").toString().equals("0")) {
+            return 0;
+        }
+
+        JSONObject result = res.getJSONObject("result");
+        if (result == null) {
+            return 0;
+        }
+
+        JSONArray array = result.getJSONArray("user_list");
         if ((array != null) && (array.length() > 0)) {
             JSONObject object = array.getJSONObject(0);
             return Double.parseDouble(object.get("score").toString());
@@ -146,7 +176,7 @@ public class BaiduFaceRecognitionService implements InitializingBean, FaceRecogn
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         client = new AipFace(appId, apiKey, secretKey);
         client.setConnectionTimeoutInMillis(timeout);
         client.setSocketTimeoutInMillis(timeout);

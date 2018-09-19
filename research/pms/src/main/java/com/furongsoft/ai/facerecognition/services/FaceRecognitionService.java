@@ -28,7 +28,7 @@ public interface FaceRecognitionService {
      * @param faceId 人脸索引
      * @return 是否成功
      */
-    boolean deleteFaces(String userId, String faceId);
+    boolean deleteFace(String userId, String faceId);
 
     /**
      * 删除用户
