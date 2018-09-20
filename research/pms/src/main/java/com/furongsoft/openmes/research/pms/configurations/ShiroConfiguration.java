@@ -67,7 +67,7 @@ public class ShiroConfiguration {
         filterChainDefinitionMap.put("/admin/**", "anon");
 
         // 文件上传
-        filterChainDefinitionMap.put("/file/**", "cors, authc");
+        filterChainDefinitionMap.put("/storage/**", "cors, authc");
         // RESTful API
         // filterChainDefinitionMap.put("/api/**", "noSessionCreation, jwt");
         filterChainDefinitionMap.put("/api/**", "cors");

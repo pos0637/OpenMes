@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestfulService(path = "/api/v1")
 @Service
-@Transactional(rollbackFor = Exception.class)
+@Transactional(rollbackFor = Throwable.class)
 public class TaskService extends BaseService<Task, Long> {
     private final UserGroupRepository userGroupRepository;
     private final UserGroupUserRepository userGroupUserRepository;
